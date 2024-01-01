@@ -1,16 +1,18 @@
+import { useState } from "react";
 import "./App.css";
-import { Component } from "react";
+import CardList from "./components/CardList/CardList.component";
+import SearchBar from "./components/SearchBar/SearchBar.component";
 
-class App extends Component {
-  constructor() {
-    super();
+const App = () => {
 
-    this.state = {
-      products: [],
-      searchField: "",
-    };
-  }
+  const [searchField, setSearchField] = useState('');
 
+  const onSearchChange = (event) => {
+    const searchFieldString = event.target.value.toLocaleLowerCase();
+    setSearchField(searchFieldString);
+  };
+  
+  
   componentDidMount() {
     fetch("https://fakestoreapi.com/products")
       .then((response) => response.json())
@@ -28,33 +30,32 @@ class App extends Component {
       );
   }
 
+  
+
   render() {
+    const { products, searchField } = this.state;
+    const { onSearchChange } = this;
+
     const filteredProducts = this.state.products.filter((product) => {
       return product.title.toLocaleLowerCase().includes(this.state.searchField);
     });
 
-    return (
-      <div className="App">
-        <input
-          className="search-box"
-          type="search"
-          placeholder="Produkt suchen"
-          onChange={(event) => {
-            const searchField = event.target.value.toLocaleLowerCase();
-            this.setState(() => {
-              return { searchField };
-            });
-          }}
-        />
-        {filteredProducts.map((product) => {
-          return (
-            <div key={product.id}>
-              <h2>{product.title}</h2>
-            </div>
-          );
-        })}
-      </div>
-    );
+  return (
+    <div className="App">
+      <h1 className="app-title"> Yusuf's Product Shop</h1>
+      <SearchBar
+        onChangeHandler={onSearchChange}
+        placeholder="Produkte suchen"
+        className="products-search-bar"
+      />
+      <CardList products={filteredProducts} />
+    </div>
+  );
+  
+
+  
+
+    
   }
 }
 
